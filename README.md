@@ -208,7 +208,7 @@ data["origin"].value_counts()
 
 (`1` means a US car maker, `2` means a European car maker, `3` means an Asian car maker.)
 
-Because `1` does not appear in our one-hot encoded variable (we only have `origin_2` and `origin_3`), we know that **`1` is the reference category**. Thus we can interpret the coefficients of `origin_2` and `origin_2` like this:
+Because `1` does not appear in our one-hot encoded variable (we only have `origin_2` and `origin_3`), we know that **`1` is the reference category**. Thus we can interpret the coefficients of `origin_2` and `origin_3` like this:
 
 * `origin_2` means the difference associated with a car being from a European car maker vs. a US car maker. In other words, compared to US car makers, we see an associated increase of about 2 MPG for European car makers.
 * `origin_3` means the difference associated with a car being from an Asian car maker vs. a US car maker. We see an associated increase of about 2.2 MPG for Asian car makers compared to US car makers.
@@ -1864,6 +1864,8 @@ mean_squared_error(y, results.predict(sm.add_constant(X)), squared=False)
 
 ## Final Model Results
 
+Here we'll walk through a **narrative** version of our final model, starting from the beginning. It is fairly typical that your actual modeling process will not match the narrative you describe at the end, since the final version will be cleaned up and won't include extraneous details about things you tried that didn't work. For example, unless you had a specific reason to tell stakeholders why `origin` wasn't part of the final model, your final narrative can just skip over talking about `origin` at all, as this one does.
+
 ### Data Understanding and Preparation
 
 Our final model included these features:
@@ -1919,7 +1921,6 @@ Below are partial regression plots for all model features:
 
 
 ```python
-# __SOLUTION__
 fig = plt.figure(figsize=(15,15))
 sm.graphics.plot_partregress_grid(
     results,
