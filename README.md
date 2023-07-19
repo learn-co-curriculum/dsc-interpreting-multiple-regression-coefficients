@@ -24,11 +24,7 @@ import pandas as pd
 data = pd.read_csv("auto-mpg.csv")
 data["make"] = data["car name"].str.split().apply(lambda x: x[0])
 
-# Prepare y and X for modeling
-y = data["mpg"]
-X = data[["weight", "model year", "origin"]]
-X = pd.get_dummies(X, columns=["origin"], drop_first=True) # origin is categorical
-X
+data
 ```
 
 
@@ -52,47 +48,83 @@ X
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>mpg</th>
+      <th>cylinders</th>
+      <th>displacement</th>
+      <th>horsepower</th>
       <th>weight</th>
+      <th>acceleration</th>
       <th>model year</th>
-      <th>origin_2</th>
-      <th>origin_3</th>
+      <th>origin</th>
+      <th>car name</th>
+      <th>make</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
+      <td>18.0</td>
+      <td>8</td>
+      <td>307.0</td>
+      <td>130</td>
       <td>3504</td>
+      <td>12.0</td>
       <td>70</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>chevrolet chevelle malibu</td>
+      <td>chevrolet</td>
     </tr>
     <tr>
       <th>1</th>
+      <td>15.0</td>
+      <td>8</td>
+      <td>350.0</td>
+      <td>165</td>
       <td>3693</td>
+      <td>11.5</td>
       <td>70</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>buick skylark 320</td>
+      <td>buick</td>
     </tr>
     <tr>
       <th>2</th>
+      <td>18.0</td>
+      <td>8</td>
+      <td>318.0</td>
+      <td>150</td>
       <td>3436</td>
+      <td>11.0</td>
       <td>70</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>plymouth satellite</td>
+      <td>plymouth</td>
     </tr>
     <tr>
       <th>3</th>
+      <td>16.0</td>
+      <td>8</td>
+      <td>304.0</td>
+      <td>150</td>
       <td>3433</td>
+      <td>12.0</td>
       <td>70</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>amc rebel sst</td>
+      <td>amc</td>
     </tr>
     <tr>
       <th>4</th>
+      <td>17.0</td>
+      <td>8</td>
+      <td>302.0</td>
+      <td>140</td>
       <td>3449</td>
+      <td>10.5</td>
       <td>70</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>ford torino</td>
+      <td>ford</td>
     </tr>
     <tr>
       <th>...</th>
@@ -100,88 +132,134 @@ X
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
       <th>387</th>
+      <td>27.0</td>
+      <td>4</td>
+      <td>140.0</td>
+      <td>86</td>
       <td>2790</td>
+      <td>15.6</td>
       <td>82</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>ford mustang gl</td>
+      <td>ford</td>
     </tr>
     <tr>
       <th>388</th>
+      <td>44.0</td>
+      <td>4</td>
+      <td>97.0</td>
+      <td>52</td>
       <td>2130</td>
+      <td>24.6</td>
       <td>82</td>
-      <td>1</td>
-      <td>0</td>
+      <td>2</td>
+      <td>vw pickup</td>
+      <td>vw</td>
     </tr>
     <tr>
       <th>389</th>
+      <td>32.0</td>
+      <td>4</td>
+      <td>135.0</td>
+      <td>84</td>
       <td>2295</td>
+      <td>11.6</td>
       <td>82</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>dodge rampage</td>
+      <td>dodge</td>
     </tr>
     <tr>
       <th>390</th>
+      <td>28.0</td>
+      <td>4</td>
+      <td>120.0</td>
+      <td>79</td>
       <td>2625</td>
+      <td>18.6</td>
       <td>82</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>ford ranger</td>
+      <td>ford</td>
     </tr>
     <tr>
       <th>391</th>
-      <td>2720</td>
+      <td>31.0</td>
+      <td>4</td>
+      <td>119.0</td>
       <td>82</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2720</td>
+      <td>19.4</td>
+      <td>82</td>
+      <td>1</td>
+      <td>chevy s-10</td>
+      <td>chevy</td>
     </tr>
   </tbody>
 </table>
-<p>392 rows × 4 columns</p>
+<p>392 rows × 10 columns</p>
 </div>
 
 
 
 
 ```python
+# Prepare y and X for modeling
+y = data["mpg"]
+X = data[["weight", "model year", "origin"]]
+
+# origin is categorical and needs to be numeric to run regression
+X = pd.get_dummies(X, columns=["origin"], drop_first=True, dtype=int) 
+```
+
+
+```python
 import statsmodels.api as sm
 
-model = sm.OLS(y, sm.add_constant(X))
+model = sm.OLS(y,X)
 results = model.fit()
 
 print(results.summary())
 ```
 
-                                OLS Regression Results                            
-    ==============================================================================
-    Dep. Variable:                    mpg   R-squared:                       0.819
-    Model:                            OLS   Adj. R-squared:                  0.817
-    Method:                 Least Squares   F-statistic:                     437.9
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          3.53e-142
-    Time:                        15:26:52   Log-Likelihood:                -1026.1
-    No. Observations:                 392   AIC:                             2062.
-    Df Residuals:                     387   BIC:                             2082.
-    Df Model:                           4                                         
-    Covariance Type:            nonrobust                                         
+                                     OLS Regression Results                                
+    =======================================================================================
+    Dep. Variable:                    mpg   R-squared (uncentered):                   0.981
+    Model:                            OLS   Adj. R-squared (uncentered):              0.981
+    Method:                 Least Squares   F-statistic:                              5014.
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):                        0.00
+    Time:                        13:49:15   Log-Likelihood:                         -1036.4
+    No. Observations:                 392   AIC:                                      2081.
+    Df Residuals:                     388   BIC:                                      2097.
+    Df Model:                           4                                                  
+    Covariance Type:            nonrobust                                                  
     ==============================================================================
                      coef    std err          t      P>|t|      [0.025      0.975]
     ------------------------------------------------------------------------------
-    const        -18.3069      4.017     -4.557      0.000     -26.205     -10.409
-    weight        -0.0059      0.000    -22.647      0.000      -0.006      -0.005
-    model year     0.7698      0.049     15.818      0.000       0.674       0.866
-    origin_2       1.9763      0.518      3.815      0.000       0.958       2.995
-    origin_3       2.2145      0.519      4.268      0.000       1.194       3.235
+    weight        -0.0064      0.000    -27.442      0.000      -0.007      -0.006
+    model year     0.5533      0.011     51.274      0.000       0.532       0.575
+    origin_2       1.4179      0.516      2.748      0.006       0.403       2.432
+    origin_3       1.9199      0.528      3.638      0.000       0.882       2.957
     ==============================================================================
-    Omnibus:                       32.293   Durbin-Watson:                   1.251
-    Prob(Omnibus):                  0.000   Jarque-Bera (JB):               58.234
-    Skew:                           0.507   Prob(JB):                     2.26e-13
-    Kurtosis:                       4.593   Cond. No.                     7.39e+04
+    Omnibus:                       48.579   Durbin-Watson:                   1.211
+    Prob(Omnibus):                  0.000   Jarque-Bera (JB):               96.730
+    Skew:                           0.691   Prob(JB):                     9.90e-22
+    Kurtosis:                       5.003   Cond. No.                     1.11e+04
     ==============================================================================
     
     Notes:
-    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-    [2] The condition number is large, 7.39e+04. This might indicate that there are
+    [1] R² is computed without centering (uncentered) since the model does not contain a constant.
+    [2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+    [3] The condition number is large, 1.11e+04. This might indicate that there are
     strong multicollinearity or other numerical problems.
 
 
@@ -199,10 +277,11 @@ data["origin"].value_counts()
 
 
 
+    origin
     1    245
     3     79
     2     68
-    Name: origin, dtype: int64
+    Name: count, dtype: int64
 
 
 
@@ -224,122 +303,9 @@ For example, if we set `2` (European car maker) as the reference category, our m
 
 ```python
 X = data[["weight", "model year", "origin"]]
-X = pd.get_dummies(X, columns=["origin"])
+X = pd.get_dummies(X, columns=["origin"], dtype=int)
 X = X.drop("origin_2", axis=1)
-X
 ```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>weight</th>
-      <th>model year</th>
-      <th>origin_1</th>
-      <th>origin_3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>3504</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3693</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3436</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>3433</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>3449</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>387</th>
-      <td>2790</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>388</th>
-      <td>2130</td>
-      <td>82</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>389</th>
-      <td>2295</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>390</th>
-      <td>2625</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>391</th>
-      <td>2720</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>392 rows × 4 columns</p>
-</div>
-
-
 
 
 ```python
@@ -366,122 +332,9 @@ Or if we set `3` (Asian car maker) as the reference category, our model looks li
 
 ```python
 X = data[["weight", "model year", "origin"]]
-X = pd.get_dummies(X, columns=["origin"])
+X = pd.get_dummies(X, columns=["origin"], dtype=int)
 X = X.drop("origin_3", axis=1)
-X
 ```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>weight</th>
-      <th>model year</th>
-      <th>origin_1</th>
-      <th>origin_2</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>3504</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3693</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3436</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>3433</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>3449</td>
-      <td>70</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>387</th>
-      <td>2790</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>388</th>
-      <td>2130</td>
-      <td>82</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>389</th>
-      <td>2295</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>390</th>
-      <td>2625</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>391</th>
-      <td>2720</td>
-      <td>82</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>392 rows × 4 columns</p>
-</div>
-
-
 
 
 ```python
@@ -538,7 +391,7 @@ What about `make`, which contains many more categories?
 
 
 ```python
-pd.get_dummies(data["make"])
+pd.get_dummies(data["make"], dtype=int)
 ```
 
 
@@ -862,7 +715,7 @@ We could just use `drop_first=True`, add this predictor to our other three, and 
 
 ```python
 X = data[["weight", "model year", "origin", "make"]]
-X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True)
+X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True, dtype=int)
 X
 ```
 
@@ -1195,8 +1048,8 @@ print(results.summary())
     Dep. Variable:                    mpg   R-squared:                       0.849
     Model:                            OLS   Adj. R-squared:                  0.833
     Method:                 Least Squares   F-statistic:                     52.34
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          5.34e-122
-    Time:                        15:26:53   Log-Likelihood:                -990.31
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):          5.34e-122
+    Time:                        13:49:15   Log-Likelihood:                -990.31
     No. Observations:                 392   AIC:                             2059.
     Df Residuals:                     353   BIC:                             2214.
     Df Model:                          38                                         
@@ -1249,12 +1102,12 @@ print(results.summary())
     Omnibus:                       26.860   Durbin-Watson:                   1.302
     Prob(Omnibus):                  0.000   Jarque-Bera (JB):               56.989
     Skew:                           0.368   Prob(JB):                     4.22e-13
-    Kurtosis:                       4.716   Cond. No.                     7.45e+19
+    Kurtosis:                       4.716   Cond. No.                     7.94e+19
     ==============================================================================
     
     Notes:
     [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-    [2] The smallest eigenvalue is 6.78e-31. This might indicate that there are
+    [2] The smallest eigenvalue is 5.96e-31. This might indicate that there are
     strong multicollinearity problems or that the design matrix is singular.
 
 
@@ -1282,6 +1135,7 @@ data["make"].value_counts()
 
 
 
+    make
     ford             48
     chevrolet        43
     plymouth         31
@@ -1296,30 +1150,30 @@ data["make"].value_counts()
     mercury          11
     mazda            10
     oldsmobile       10
-    peugeot           8
     fiat              8
+    peugeot           8
     audi              7
     vw                6
-    volvo             6
     chrysler          6
+    volvo             6
     opel              4
-    subaru            4
     saab              4
-    renault           3
+    subaru            4
     chevy             3
-    cadillac          2
-    mercedes-benz     2
-    bmw               2
+    renault           3
     maxda             2
-    hi                1
-    capri             1
-    chevroelt         1
-    nissan            1
-    toyouta           1
+    cadillac          2
+    bmw               2
+    mercedes-benz     2
     triumph           1
     vokswagen         1
     mercedes          1
-    Name: make, dtype: int64
+    hi                1
+    capri             1
+    chevroelt         1
+    toyouta           1
+    nissan            1
+    Name: count, dtype: int64
 
 
 
@@ -1347,6 +1201,7 @@ data["make"].value_counts()
 
 
 
+    make
     ford             48
     chevrolet        47
     plymouth         31
@@ -1361,30 +1216,30 @@ data["make"].value_counts()
     mazda            12
     mercury          11
     oldsmobile       10
-    peugeot           8
     fiat              8
+    peugeot           8
     audi              7
-    chrysler          6
     volvo             6
+    chrysler          6
+    saab              4
     opel              4
     subaru            4
-    saab              4
     mercedes-benz     3
     renault           3
-    bmw               2
     cadillac          2
-    hi                1
+    bmw               2
     capri             1
-    nissan            1
+    hi                1
     triumph           1
-    Name: make, dtype: int64
+    nissan            1
+    Name: count, dtype: int64
 
 
 
 
 ```python
 X = data[["weight", "model year", "origin", "make"]]
-X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True)
+X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True, dtype=int)
 model = sm.OLS(y, sm.add_constant(X))
 results = model.fit()
 
@@ -1396,8 +1251,8 @@ print(results.summary())
     Dep. Variable:                    mpg   R-squared:                       0.837
     Model:                            OLS   Adj. R-squared:                  0.823
     Method:                 Least Squares   F-statistic:                     59.81
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          2.11e-122
-    Time:                        15:26:53   Log-Likelihood:                -1005.1
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):          2.11e-122
+    Time:                        13:49:15   Log-Likelihood:                -1005.1
     No. Observations:                 392   AIC:                             2074.
     Df Residuals:                     360   BIC:                             2201.
     Df Model:                          31                                         
@@ -1466,23 +1321,24 @@ data["make"].value_counts()[data["make"].value_counts() < 10]
 
 
 
-    peugeot          8
+    make
     fiat             8
+    peugeot          8
     audi             7
-    chrysler         6
     volvo            6
+    chrysler         6
+    saab             4
     opel             4
     subaru           4
-    saab             4
     mercedes-benz    3
     renault          3
-    bmw              2
     cadillac         2
-    hi               1
+    bmw              2
     capri            1
-    nissan           1
+    hi               1
     triumph          1
-    Name: make, dtype: int64
+    nissan           1
+    Name: count, dtype: int64
 
 
 
@@ -1495,9 +1351,9 @@ to_replace
 
 
 
-    array(['peugeot', 'fiat', 'audi', 'chrysler', 'volvo', 'opel', 'subaru',
-           'saab', 'mercedes-benz', 'renault', 'bmw', 'cadillac', 'hi',
-           'capri', 'nissan', 'triumph'], dtype=object)
+    array(['fiat', 'peugeot', 'audi', 'volvo', 'chrysler', 'saab', 'opel',
+           'subaru', 'mercedes-benz', 'renault', 'cadillac', 'bmw', 'capri',
+           'hi', 'triumph', 'nissan'], dtype=object)
 
 
 
@@ -1515,6 +1371,7 @@ data["make"].value_counts()
 
 
 
+    make
     other         61
     ford          48
     chevrolet     47
@@ -1530,14 +1387,14 @@ data["make"].value_counts()
     mazda         12
     mercury       11
     oldsmobile    10
-    Name: make, dtype: int64
+    Name: count, dtype: int64
 
 
 
 
 ```python
 X = data[["weight", "model year", "origin", "make"]]
-X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True)
+X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True, dtype=int)
 model = sm.OLS(y, sm.add_constant(X))
 results = model.fit()
 
@@ -1549,8 +1406,8 @@ print(results.summary())
     Dep. Variable:                    mpg   R-squared:                       0.832
     Model:                            OLS   Adj. R-squared:                  0.824
     Method:                 Least Squares   F-statistic:                     102.7
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          3.02e-132
-    Time:                        15:26:53   Log-Likelihood:                -1011.5
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):          3.02e-132
+    Time:                        13:49:15   Log-Likelihood:                -1011.5
     No. Observations:                 392   AIC:                             2061.
     Df Residuals:                     373   BIC:                             2136.
     Df Model:                          18                                         
@@ -1608,7 +1465,7 @@ All of the significant coefficients happen to be positive. Why is that? It turns
 
 
 ```python
-data.groupby("make").mean().sort_values(by="mpg")[["mpg"]]
+data.groupby("make").mean('mpg').sort_values(by="mpg")[["mpg"]]
 ```
 
 
@@ -1717,7 +1574,7 @@ A lot of people who are just learning about linear regression modeling will try 
 
 ```python
 X = data[["weight", "model year", "origin", "make"]]
-X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True)
+X = pd.get_dummies(X, columns=["origin", "make"], drop_first=True, dtype=int)
 
 not_significant = [
     "origin_2",
@@ -1748,8 +1605,8 @@ print(results.summary())
     Dep. Variable:                    mpg   R-squared:                       0.813
     Model:                            OLS   Adj. R-squared:                  0.811
     Method:                 Least Squares   F-statistic:                     336.1
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          3.56e-138
-    Time:                        15:26:53   Log-Likelihood:                -1032.4
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):          3.56e-138
+    Time:                        13:49:15   Log-Likelihood:                -1032.4
     No. Observations:                 392   AIC:                             2077.
     Df Residuals:                     386   BIC:                             2101.
     Df Model:                           5                                         
@@ -1793,7 +1650,7 @@ A better strategy would go back to our **data understanding** and remove columns
 
 ```python
 X = data[["weight", "model year", "make"]]
-X = pd.get_dummies(X, columns=["make"], drop_first=True)
+X = pd.get_dummies(X, columns=["make"], drop_first=True, dtype=int)
 
 model = sm.OLS(y, sm.add_constant(X))
 results = model.fit()
@@ -1806,8 +1663,8 @@ print(results.summary())
     Dep. Variable:                    mpg   R-squared:                       0.831
     Model:                            OLS   Adj. R-squared:                  0.824
     Method:                 Least Squares   F-statistic:                     115.6
-    Date:                Thu, 12 May 2022   Prob (F-statistic):          5.53e-134
-    Time:                        15:26:53   Log-Likelihood:                -1012.2
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):          5.53e-134
+    Time:                        13:49:15   Log-Likelihood:                -1012.2
     No. Observations:                 392   AIC:                             2058.
     Df Residuals:                     375   BIC:                             2126.
     Df Model:                          16                                         
@@ -1858,7 +1715,7 @@ mean_squared_error(y, results.predict(sm.add_constant(X)), squared=False)
 
 
 
-    3.2005653137923917
+    3.200565313792392
 
 
 
@@ -1889,21 +1746,21 @@ data.plot.scatter(x="model year", y="mpg", ax=ax2);
 
 
     
-![png](index_files/index_43_0.png)
+![png](index_files/index_44_0.png)
     
 
 
 
 ```python
 fig, ax = plt.subplots(figsize=(12,5))
-data.groupby("make").mean().sort_values(by="mpg").plot.bar(y="mpg", ax=ax)
+data.groupby("make").mean('mpg').sort_values(by="mpg").plot.bar(y="mpg", ax=ax)
 ax.axhline(y=data["mpg"].mean(), label="mean", color="black", linestyle="--")
 ax.legend();
 ```
 
 
     
-![png](index_files/index_44_0.png)
+![png](index_files/index_45_0.png)
     
 
 
@@ -1933,7 +1790,7 @@ plt.show()
 
 
     
-![png](index_files/index_47_0.png)
+![png](index_files/index_48_0.png)
     
 
 
@@ -2176,7 +2033,7 @@ results_df.drop(["const", "weight", "model year", "make_other"]).plot.barh(y="co
 
 
     
-![png](index_files/index_53_0.png)
+![png](index_files/index_54_0.png)
     
 
 
